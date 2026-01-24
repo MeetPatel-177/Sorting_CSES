@@ -1,9 +1,17 @@
 /**
  *    author:  Meet
- *    created: 31.10.2025 12:17:55
+ *    created: 24.01.2026 12:08:40
 **/
 #include <bits/stdc++.h>
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+
 using namespace std;
+using namespace __gnu_pbds;
+template <typename T>
+using ordered_set = tree<T,null_type,less<T>,rb_tree_tag,tree_order_statistics_node_update>;
+// order_of_key(k) : no. of elements < k
+// *find_by_order(i) : value at index i (0-based)
 
 #define ll long long int
 const ll INF = 4e18;
@@ -32,16 +40,26 @@ int main() {
         arr.assign(n,0);
         for(ll i=0; i<n; ++i) cin >> arr[i];
         
-        unordered_map<ll,ll> last;
+        ll ans = 0;
 
-        ll ans = 0, prev = 0;
+        map<ll,ll> f;
+        ll l = 0, r = 0;
 
-        for(ll i=0; i<n; ++i) {
-            if(last.count(arr[i])) {
-                prev = max(prev, last[arr[i]] + 1);
+        ll plen = 0;
+
+        while(r < n) {
+            while(r < n && f[arr[r]] == 0) {
+                ++f[arr[r]];
+                ++r;
             }
-            ans += (i - prev + 1);
-            last[arr[i]] = i;
+            ll len = r - l;
+            ans += (len*(len+1)/2);
+            ans -= (plen*(plen+1)/2);
+            while(r < n && f[arr[r]] != 0) {
+                --f[arr[l]];
+                ++l;
+            }
+            plen = r - l;
         }
 
         cout << ans << "\n";
